@@ -14,6 +14,16 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { useSingleDefiVault } from 'hooks/useDefiVault'
 
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
+import { usePrice } from 'hooks/usePriceSet'
+import { toLocaleNumberString } from 'utils/toLocaleNumberString'
+
+interface PrevDetails {
+  vault: string
+  currentPrice: string
+  strikePrice: string
+  expiredAt: any
+  apy: string
+}
 
 export const StyledUnorderList = styled('ul')(({ theme }) => ({
   paddingLeft: '14px',
@@ -39,7 +49,7 @@ export default function DefiMgmt() {
   const { currency, type, chainName } = useParams<{ currency: string; type: string; chainName: string }>()
 
   const product = useSingleDefiVault(chainName ?? '', currency ?? '', type ?? '')
-
+  const curPrice = usePrice(currency, 120000)
   // const prevDetails = undefined
   const isDownMd = useBreakpoint('md')
   const strikePrice = product?.strikePrice ?? '-'
@@ -119,9 +129,14 @@ export default function DefiMgmt() {
           }
           subject={Subject.RecurringVault}
           subscribeForm={
-            <RecurringPolicy
-              type={product?.type.toLocaleLowerCase() === 'call' ? 'call' : 'put'}
-              currencySymbol={product?.currency ?? '-'}
+            <PrevCycleStats
+              prevDetails={{
+                vault: product?.currency ?? '-',
+                currentPrice: curPrice ? toLocaleNumberString(curPrice, 2) : '-',
+                strikePrice: product.strikePrice,
+                expiredAt: product.expiredAt,
+                apy: product?.apy
+              }}
             />
           }
           returnOnInvestmentListItems={returnOnInvestmentListItems}
@@ -129,7 +144,10 @@ export default function DefiMgmt() {
           chart={chart}
         >
           <Grid xs={12} md={4} item>
-            <PrevCycleStats prevDetails={undefined} />
+            <RecurringPolicy
+              type={product?.type.toLocaleLowerCase() === 'call' ? 'call' : 'put'}
+              currencySymbol={product?.currency ?? '-'}
+            />
           </Grid>
           {!isDownMd && (
             <Grid xs={12} md={8} item>
@@ -169,63 +187,65 @@ function RecurringPolicy({ type, currencySymbol }: { type: 'call' | 'put'; curre
   }, [policy.length])
 
   return (
-    <Box display="grid" gap="19px" padding="33px 24px">
-      <Typography fontSize={24} fontWeight={700}>
-        Recurring Policy
-      </Typography>
-      <StyledUnorderList>
-        <Text currencySymbol={currencySymbol} />
-      </StyledUnorderList>
-      <Box position="relative">
-        <Box width="100%" display="flex" justifyContent="space-between" position="absolute" top="50%">
-          <TextButton onClick={handlePrev} disabled={curIdx === 0} style={{ '&:disabled': { opacity: 0 } }}>
-            <svg width="12" height="19" viewBox="0 0 12 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M10.4844 17.9707L1.99909 9.48542L10.4844 1.00014"
-                stroke={theme.palette.primary.main}
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </TextButton>
-          <TextButton
-            onClick={handleNext}
-            disabled={curIdx === policy.length - 1}
-            style={{ '&:disabled': { opacity: 0 } }}
-          >
-            <svg width="11" height="19" viewBox="0 0 11 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M0.828125 1L9.31341 9.48528L0.828125 17.9706"
-                stroke={theme.palette.primary.main}
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </TextButton>
-        </Box>
-        <Typography fontWeight={700} fontSize={14} color="primary">
-          {valutPolicyTitle[curIdx]}
+    <Card width={'100%'}>
+      <Box display="grid" gap="19px" padding="33px 24px">
+        <Typography fontSize={24} fontWeight={700}>
+          Recurring Policy
         </Typography>
-        {<RecurringPolicyPage img={policy[curIdx].img} text={policy[curIdx].text} />}
+        <StyledUnorderList>
+          <Text currencySymbol={currencySymbol} />
+        </StyledUnorderList>
+        <Box position="relative">
+          <Box width="100%" display="flex" justifyContent="space-between" position="absolute" top="50%">
+            <TextButton onClick={handlePrev} disabled={curIdx === 0} style={{ '&:disabled': { opacity: 0 } }}>
+              <svg width="12" height="19" viewBox="0 0 12 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M10.4844 17.9707L1.99909 9.48542L10.4844 1.00014"
+                  stroke={theme.palette.primary.main}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </TextButton>
+            <TextButton
+              onClick={handleNext}
+              disabled={curIdx === policy.length - 1}
+              style={{ '&:disabled': { opacity: 0 } }}
+            >
+              <svg width="11" height="19" viewBox="0 0 11 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M0.828125 1L9.31341 9.48528L0.828125 17.9706"
+                  stroke={theme.palette.primary.main}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </TextButton>
+          </Box>
+          <Typography fontWeight={700} fontSize={14} color="primary">
+            {valutPolicyTitle[curIdx]}
+          </Typography>
+          {<RecurringPolicyPage img={policy[curIdx].img} text={policy[curIdx].text} />}
+        </Box>
+        <Box display="flex" gap="5px" margin="10px auto 0">
+          {policy.map((item, idx) => {
+            const active = curIdx === idx
+            return (
+              <div
+                key={idx}
+                style={{
+                  height: 3,
+                  width: active ? 24 : 6,
+                  backgroundColor: active ? '#31B047' : '#C4C4C4',
+                  transition: '.5s',
+                  borderRadius: 3
+                }}
+              />
+            )
+          })}
+        </Box>
       </Box>
-      <Box display="flex" gap="5px" margin="10px auto 0">
-        {policy.map((item, idx) => {
-          const active = curIdx === idx
-          return (
-            <div
-              key={idx}
-              style={{
-                height: 3,
-                width: active ? 24 : 6,
-                backgroundColor: active ? '#31B047' : '#C4C4C4',
-                transition: '.5s',
-                borderRadius: 3
-              }}
-            />
-          )
-        })}
-      </Box>
-    </Box>
+    </Card>
   )
 }
 
@@ -254,27 +274,21 @@ function RecurringPolicyPage({ img, text }: { img: ReactElement<any, any>; text:
   )
 }
 
-function PrevCycleStats({ prevDetails }: { prevDetails: any | undefined }) {
+function PrevCycleStats({ prevDetails }: { prevDetails: PrevDetails | undefined }) {
   const theme = useTheme()
   const data = useMemo(
     () => ({
-      ['APY']: prevDetails?.apy ?? '-',
-      ['Strike Price']: `${prevDetails?.strikePrice ?? '-'} USDT`,
-      ['Executed Price']: `${prevDetails?.deliveryPrice ?? '-'} USDT`,
-      ['Status']: prevDetails?.status ?? '-',
-      ['Your P&L']: prevDetails?.pnl ?? '-',
-      ['Date']: prevDetails
-        ? `From ${dayjs(prevDetails.ts).format('MMM DD, YYYY')} to ${dayjs(prevDetails.expiredAt).format(
-            'MMM DD, YYYY'
-          )}`
-        : '-'
+      [`Current ${prevDetails?.vault ?? ''} Price`]: prevDetails?.currentPrice ?? '-',
+      [`Selected Option Strike Price`]: `${prevDetails?.strikePrice ?? '-'} USDT`,
+      ["this Week's Performance"]: prevDetails?.apy ?? '-',
+      ['Expiry Date']: prevDetails ? `${dayjs(prevDetails.expiredAt).format('MMM DD, YYYY')}` : '-'
     }),
     [prevDetails]
   )
   return (
     <Card width={'100%'}>
       <Box display="flex" gap="21px" padding="28px" flexDirection="column" alignItems={'stretch'}>
-        <Typography fontSize={24} fontWeight={700}>
+        <Typography fontSize={24} fontWeight={700} mb={{ xs: 40, md: 130 }}>
           Previous Cycle Statistics
         </Typography>
 

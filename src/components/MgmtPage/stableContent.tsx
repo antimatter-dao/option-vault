@@ -306,14 +306,14 @@ export const vaultPolicyText: {
     return (
       <>
         <li>
-          Strategy earns its {currencySymbol} deposits by running a bullish strategy that automatically covers{' '}
+          Strategy earns its {currencySymbol} deposits by running a call strategy that automatically covers{' '}
           {currencySymbol} on a weekly basis. The vault reinvests the earnings earned back into the strategy,
           effectively increasing the saver&apos;s returns over time.
         </li>
-        <li>
+        {/* <li>
           It is important to note that regardless of type of expiry, your funds will be reinvested into the vault in
           weekly cycles. You can withdraw, once a cycle is over.
-        </li>
+        </li> */}
       </>
     )
   },
@@ -325,10 +325,10 @@ export const vaultPolicyText: {
           {currencySymbol} on a weekly basis. The strategy reinvests the earnings earned without further management,
           effectively increasing the saver&apos;s returns over time.
         </li>
-        <li>
+        {/* <li>
           It is important to note that regardless of type of expiry, your funds will be reinvested into the vault in
           weekly cycles. You can withdraw, once a cycle is over.
-        </li>
+        </li> */}
       </>
     )
   }

@@ -1,27 +1,27 @@
-import React, { useMemo } from 'react'
+import React /*{ useMemo }*/ from 'react'
 import { NavLink } from 'react-router-dom'
-import { Box, Typography, Grid, styled } from '@mui/material'
+import { Box, Typography, Grid } from '@mui/material'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import theme from 'theme'
-import Card, { OutlinedCard } from 'components/Card/Card'
-import Divider from 'components/Divider'
+import Card /*, { OutlinedCard } */ from 'components/Card/Card'
+// import Divider from 'components/Divider'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { RiskStatement, FAQ, Subject } from './stableContent'
 
-const StyledUnorderList = styled('ul')(({ theme }) => ({
-  paddingLeft: '14px',
-  color: '#808080',
-  '& li': {
-    marginTop: 10,
-    fontSize: 15.5
-  },
-  '& li span': {
-    color: '#252525'
-  },
-  '& li::marker': {
-    color: theme.palette.primary.main
-  }
-}))
+// const StyledUnorderList = styled('ul')(({ theme }) => ({
+//   paddingLeft: '14px',
+//   color: '#808080',
+//   '& li': {
+//     marginTop: 10,
+//     fontSize: 15.5
+//   },
+//   '& li span': {
+//     color: '#252525'
+//   },
+//   '& li::marker': {
+//     color: theme.palette.primary.main
+//   }
+// }))
 
 interface Props {
   showFaq?: boolean
@@ -47,7 +47,7 @@ export default function MgmtPage(props: Props) {
     type,
     subscribeForm,
     showFaq = true,
-    returnOnInvestmentListItems,
+    // returnOnInvestmentListItems,
     vaultForm,
     children,
     graphTitle
@@ -55,20 +55,20 @@ export default function MgmtPage(props: Props) {
 
   const isDownMd = useBreakpoint('md')
 
-  const returnOnInvestment = useMemo(() => {
-    return (
-      <div>
-        <Typography fontSize={16} color={theme.palette.text.primary}>
-          Strike Price &amp; APY
-        </Typography>
-        <StyledUnorderList>
-          {returnOnInvestmentListItems.map((item, idx) => (
-            <li key={idx}>{item}</li>
-          ))}
-        </StyledUnorderList>
-      </div>
-    )
-  }, [returnOnInvestmentListItems])
+  // const returnOnInvestment = useMemo(() => {
+  //   return (
+  //     <div>
+  //       <Typography fontSize={16} color={theme.palette.text.primary}>
+  //         Strike Price &amp; APY
+  //       </Typography>
+  //       <StyledUnorderList>
+  //         {returnOnInvestmentListItems.map((item, idx) => (
+  //           <li key={idx}>{item}</li>
+  //         ))}
+  //       </StyledUnorderList>
+  //     </div>
+  //   )
+  // }, [returnOnInvestmentListItems])
 
   return (
     <>
@@ -177,14 +177,14 @@ export default function MgmtPage(props: Props) {
                       {chart}
                     </Box>
                   </Box>
-                  {isDownMd ? (
+                  {/* {isDownMd ? (
                     <Box>
                       <Divider extension={24} sx={{ opacity: 0.1, marginBottom: 20 }} />
                       {returnOnInvestment}
                     </Box>
                   ) : (
                     <OutlinedCard padding="16px 20px">{returnOnInvestment}</OutlinedCard>
-                  )}
+                  )} */}
                 </Box>
               </Card>
             </Grid>
