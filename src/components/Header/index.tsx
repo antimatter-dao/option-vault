@@ -38,6 +38,7 @@ export const Tabs: Tab[] = [
   {
     title: 'Invest',
     subTab: [
+      { title: 'Weekly Sharkfin', link: 'https://sharkfin.antimatter.finance/' },
       { title: 'Defi Option Vault', route: routes.defiVault },
       { title: 'Dual Investment', link: 'https://invest.antimatter.finance/#/dual-invest' },
       { title: 'Recurring Strategy', link: 'https://invest.antimatter.finance/#/recurring-vault' }
